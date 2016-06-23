@@ -114,6 +114,7 @@ public class StoreSCU {
     private String tmpSuffix;
     private File tmpDir;
     private File tmpFile;
+
     private Association as;
 
     private long totalSize;
@@ -160,6 +161,26 @@ public class StoreSCU {
         return attrs;
     }
 
+    public static ResourceBundle getResourceBundle() {
+        return rb;
+    }
+
+    public Association getAssociation() {
+        return as;
+    }
+
+    public long getTotalSize(){
+        return totalSize;
+    }
+
+    public int getFilesScanned(){
+        return filesScanned;
+    }
+
+    public int getFilesSent() {
+        return filesSent;
+    }
+
     public void setAttributes(Attributes attrs) {
         this.attrs = attrs;
     }
@@ -188,7 +209,7 @@ public class StoreSCU {
         this.tmpDir = tmpDir;
     }
 
-    private static CommandLine parseComandLine(String[] args)
+    protected static CommandLine parseComandLine(String[] args)
             throws ParseException {
         Options opts = new Options();
         CLIUtils.addConnectOption(opts);
@@ -323,7 +344,7 @@ public class StoreSCU {
         return cl.getOptionValue("uid-suffix");
     }
 
-    private static void configureTmpFile(StoreSCU storescu, CommandLine cl) {
+    protected static void configureTmpFile(StoreSCU storescu, CommandLine cl) {
         if (cl.hasOption("tmp-file-dir"))
             storescu.setTmpFileDirectory(new File(cl
                     .getOptionValue("tmp-file-dir")));
