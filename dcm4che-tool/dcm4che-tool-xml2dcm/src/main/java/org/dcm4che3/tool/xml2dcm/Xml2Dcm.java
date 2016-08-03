@@ -87,7 +87,21 @@ public class Xml2Dcm {
     private boolean nofmi;
     private DicomEncodingOptions encOpts = DicomEncodingOptions.DEFAULT;
     private List<File> bulkDataFiles;
+
+    protected void setFileMetaInformation(Attributes fmi) {
+        this.fmi = fmi;
+    }
+
     private Attributes fmi;
+
+    protected Attributes getDataset() {
+        return dataset;
+    }
+
+    protected void setDataset(Attributes dataset) {
+        this.dataset = dataset;
+    }
+
     private Attributes dataset;
 
     public final void setIncludeBulkData(IncludeBulkData includeBulkData) {

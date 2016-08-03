@@ -121,6 +121,18 @@ public class StoreSCP {
 
     };
 
+    protected Connection getConnection() {
+        return conn;
+    }
+
+    protected ApplicationEntity getApplicationEntity() {
+        return ae;
+    }
+
+    protected Device getDevice() {
+        return device;
+    }
+
     public StoreSCP() throws IOException {
         device.setDimseRQHandler(createServiceRegistry());
         device.addConnection(conn);
@@ -189,7 +201,7 @@ public class StoreSCP {
         this.status = status;
     }
 
-    private static CommandLine parseComandLine(String[] args)
+    protected static CommandLine parseComandLine(String[] args)
             throws ParseException {
         Options opts = new Options();
         CLIUtils.addBindServerOption(opts);
@@ -267,7 +279,7 @@ public class StoreSCP {
         }
     }
 
-    private static void configureStorageDirectory(StoreSCP main, CommandLine cl) {
+    protected static void configureStorageDirectory(StoreSCP main, CommandLine cl) {
         if (!cl.hasOption("ignore")) {
             main.setStorageDirectory(
                     new File(cl.getOptionValue("directory", ".")));
@@ -276,7 +288,7 @@ public class StoreSCP {
         }
     }
 
-    private static void configureTransferCapability(ApplicationEntity ae,
+    protected static void configureTransferCapability(ApplicationEntity ae,
             CommandLine cl) throws IOException {
         if (cl.hasOption("accept-unknown")) {
             ae.addTransferCapability(

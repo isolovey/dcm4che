@@ -536,7 +536,7 @@ public class StoreSCU {
         as = ae.connect(remote, rq);
     }
 
-    private void onCStoreRSP(Attributes cmd, File f) {
+    protected void onCStoreRSP(Attributes cmd, File f) {
         int status = cmd.getInt(Tag.Status, -1);
         switch (status) {
         case Status.Success:

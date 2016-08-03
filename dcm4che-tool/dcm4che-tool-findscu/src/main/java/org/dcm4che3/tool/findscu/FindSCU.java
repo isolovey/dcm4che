@@ -192,6 +192,10 @@ public class FindSCU {
         this.cancelAfter = cancelAfter;
     }
 
+    protected int getCancelAfter(){
+        return this.cancelAfter;
+    }
+
     public final void setOutputDirectory(File outDir) {
         outDir.mkdirs();
         this.outDir = outDir;
@@ -230,7 +234,7 @@ public class FindSCU {
         this.inFilter = inFilter;
     }
 
-    private static CommandLine parseComandLine(String[] args)
+    protected static CommandLine parseComandLine(String[] args)
                 throws ParseException {
             Options opts = new Options();
             addServiceClassOptions(opts);
@@ -335,6 +339,10 @@ public class FindSCU {
     public Connection getRemoteConnection() {
         return remote;
     }
+
+    protected Connection getConnection() {
+        return conn;
+    }
     
     public AAssociateRQ getAAssociateRQ() {
         return rq;
@@ -413,7 +421,7 @@ public class FindSCU {
         return queryOptions;
     }
 
-    private static void configureOutput(FindSCU main, CommandLine cl) {
+    protected static void configureOutput(FindSCU main, CommandLine cl) {
         if (cl.hasOption("out-dir"))
             main.setOutputDirectory(new File(cl.getOptionValue("out-dir")));
         main.setOutputFileFormat(cl.getOptionValue("out-file", "000'.dcm'"));
@@ -428,12 +436,12 @@ public class FindSCU {
         main.setXMLIncludeNamespaceDeclaration(cl.hasOption("xmlns"));
     }
 
-    private static void configureCancel(FindSCU main, CommandLine cl) {
+    protected static void configureCancel(FindSCU main, CommandLine cl) {
         if (cl.hasOption("cancel"))
             main.setCancelAfter(Integer.parseInt(cl.getOptionValue("cancel")));
     }
 
-    private static void configureKeys(FindSCU main, CommandLine cl) {
+    protected static void configureKeys(FindSCU main, CommandLine cl) {
         CLIUtils.addEmptyAttributes(main.keys, cl.getOptionValues("r"));
         CLIUtils.addAttributes(main.keys, cl.getOptionValues("m"));
         if (cl.hasOption("L"))
@@ -442,7 +450,7 @@ public class FindSCU {
             main.setInputFilter(CLIUtils.toTags(cl.getOptionValues("i")));
     }
 
-    private static void configureServiceClass(FindSCU main, CommandLine cl) throws ParseException {
+    protected static void configureServiceClass(FindSCU main, CommandLine cl) throws ParseException {
         main.setInformationModel(informationModelOf(cl), 
                 CLIUtils.transferSyntaxesOf(cl), queryOptionsOf(main, cl));
         if (cl.hasOption("model-uid")) {
@@ -539,7 +547,7 @@ public class FindSCU {
         query(keys, rspHandler);
     }
     
-    private void query(Attributes keys, DimseRSPHandler rspHandler) throws IOException, InterruptedException {
+    protected void query(Attributes keys, DimseRSPHandler rspHandler) throws IOException, InterruptedException {
         String cuid = model.cuid;
         if (modelUIDandTS != null) {
             Set<String> ts = as.getTransferSyntaxesFor(modelUIDandTS[0]);
@@ -553,7 +561,7 @@ public class FindSCU {
         System.out.println("C-FIND Request done in "+(t2-tStartCFind)+"ms!");
     }
     
-    private void onResult(Attributes data) {
+    protected void onResult(Attributes data) {
         int numMatches = totNumMatches.incrementAndGet();
         if (outDir == null) 
             return;

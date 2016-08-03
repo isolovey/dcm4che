@@ -97,6 +97,10 @@ public class StgCmtSCU {
     
     private static final Logger LOG = LoggerFactory.getLogger(StgCmtSCU.class);
 
+    protected ApplicationEntity getAe() {
+        return ae;
+    }
+
     private final ApplicationEntity ae;
     private final Connection remote;
     private final AAssociateRQ rq = new AAssociateRQ();
@@ -105,6 +109,11 @@ public class StgCmtSCU {
     private File storageDir;
     private boolean keepAlive;
     private int splitTag;
+
+    protected int getStatus() {
+        return status;
+    }
+
     private int status;
     private HashMap<String,List<String>> map = new HashMap<String,List<String>>();
     private Association as;
@@ -179,6 +188,10 @@ public class StgCmtSCU {
 
     public void setAttributes(Attributes attrs) {
         this.attrs = attrs;
+    }
+
+    protected Attributes getAttributes(){
+        return attrs;
     }
 
     @SuppressWarnings("unchecked")
@@ -314,7 +327,7 @@ public class StgCmtSCU {
         return true;
     }
 
-    private static CommandLine parseComandLine(String[] args)
+    protected static CommandLine parseComandLine(String[] args)
             throws ParseException{
         Options opts = new Options();
         CLIUtils.addTransferSyntaxOptions(opts);
@@ -455,7 +468,7 @@ public class StgCmtSCU {
         addOutstandingResult(tuid);
     }
 
-    private Attributes eventRecord(Association as, Attributes cmd, Attributes eventInfo)
+    protected Attributes eventRecord(Association as, Attributes cmd, Attributes eventInfo)
             throws DicomServiceException {
         if (storageDir == null)
             return null;

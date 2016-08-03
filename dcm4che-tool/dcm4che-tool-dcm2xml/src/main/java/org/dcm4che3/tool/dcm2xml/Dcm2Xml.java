@@ -80,8 +80,8 @@ import org.dcm4che3.tool.common.CLIUtils;
  */
 public class Dcm2Xml {
 
-    private static final String XML_1_0 = "1.0";
-    private static final String XML_1_1 = "1.1";
+    protected static final String XML_1_0 = "1.0";
+    protected static final String XML_1_1 = "1.1";
 
     private static ResourceBundle rb =
         ResourceBundle.getBundle("org.dcm4che3.tool.dcm2xml.messages");
@@ -97,6 +97,10 @@ public class Dcm2Xml {
     private File blkDirectory;
     private Attributes blkAttrs;
     private String xmlVersion = XML_1_0;
+
+    protected static ResourceBundle getResourceBundle(){
+        return rb;
+    }
 
     public final void setXSLTURL(String xsltURL) {
         this.xsltURL = xsltURL;
@@ -143,7 +147,7 @@ public class Dcm2Xml {
     }
 
     @SuppressWarnings("static-access")
-    private static CommandLine parseComandLine(String[] args)
+    protected static CommandLine parseComandLine(String[] args)
             throws ParseException {
         Options opts = new Options();
         CLIUtils.addCommonOptions(opts);
@@ -231,7 +235,7 @@ public class Dcm2Xml {
         }
     }
 
-    private static String toURL(String fileOrURL) {
+    protected static String toURL(String fileOrURL) {
         try {
             new URL(fileOrURL);
             return fileOrURL;
@@ -240,7 +244,7 @@ public class Dcm2Xml {
         }
     }
 
-    private static void configureBulkdata(Dcm2Xml dcm2xml, CommandLine cl)
+    protected static void configureBulkdata(Dcm2Xml dcm2xml, CommandLine cl)
             throws Exception {
         if (cl.hasOption("b")) {
             dcm2xml.setIncludeBulkData(IncludeBulkData.YES);
@@ -276,7 +280,7 @@ public class Dcm2Xml {
         return attrs;
     }
 
-    private static String fname(List<String> argList) throws ParseException {
+    protected static String fname(List<String> argList) throws ParseException {
         int numArgs = argList.size();
         if (numArgs == 0)
             throw new ParseException(rb.getString("missing"));
