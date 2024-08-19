@@ -69,6 +69,8 @@ public class MultiframeExtractor {
             }
 
             void setEchoTime(Attributes sf) {
+                if(sf.contains(Tag.EchoTime)) return;
+
                 double echoTime = sf.getDouble(Tag.EffectiveEchoTime, 0);
                 if (echoTime == 0)
                     sf.setNull(Tag.EchoTime, VR.DS);
@@ -77,6 +79,10 @@ public class MultiframeExtractor {
             }
 
             void setScanningSequence(Attributes sf) {
+
+                // Do not overwrite value that's already in Enhanced MR
+                if(sf.contains(Tag.ScanningSequence)) return;
+
                 ArrayList<String> list = new ArrayList<String>(3);
                 
                 String eps = sf.getString(Tag.EchoPulseSequence);
@@ -93,6 +99,9 @@ public class MultiframeExtractor {
             }
 
             void setSequenceVariant(Attributes sf) {
+                // Do not overwrite value that's already in Enhanced MR
+                if(sf.contains(Tag.SequenceVariant)) return;
+
                 ArrayList<String> list = new ArrayList<String>(5);
                 if (!"SINGLE".equals(sf.getString(Tag.SegmentedKSpaceTraversal)))
                     list.add("SK");
@@ -115,6 +124,9 @@ public class MultiframeExtractor {
             }
 
             void setScanOptions(Attributes sf) {
+                // Do not overwrite value that's already in Enhanced MR
+                if(sf.contains(Tag.ScanOptions)) return;
+
                 ArrayList<String> list = new ArrayList<String>(3);
                 String per = sf.getString(Tag.RectilinearPhaseEncodeReordering);
                 if (per != null && !"LINEAR".equals(per))
@@ -175,6 +187,7 @@ public class MultiframeExtractor {
     static {
         impls.put(UID.EnhancedCTImageStorage, Impl.EnhancedCTImageExtractor);
         impls.put(UID.EnhancedMRImageStorage, Impl.EnhancedMRImageExtractor);
+        impls.put(UID.LegacyConvertedEnhancedMRImageStorage, Impl.EnhancedMRImageExtractor);
         impls.put(UID.EnhancedXAImageStorage, Impl.EnhancedXAImageExtractor);
         impls.put(UID.EnhancedXRFImageStorage, Impl.EnhancedXRFImageExtractor);
         impls.put(UID.EnhancedPETImageStorage, Impl.EnhancedPETImageExtractor);
@@ -291,8 +304,10 @@ public class MultiframeExtractor {
         dest.setString(Tag.SOPClassUID, VR.UI, cuid);
         dest.setString(Tag.SOPInstanceUID, VR.UI, uidMapper.get(
                 dest.getString(Tag.SOPInstanceUID)) + '.' + (frame + 1));
-        dest.setString(Tag.InstanceNumber, VR.IS,
-                createInstanceNumber(dest.getString(Tag.InstanceNumber, ""), frame));
+        if(!dest.contains(Tag.InstanceNumber)) {
+            dest.setString(Tag.InstanceNumber, VR.IS,
+                    createInstanceNumber(dest.getString(Tag.InstanceNumber, ""), frame));
+        }
         if (!preserveSeriesInstanceUID)
             dest.setString(Tag.SeriesInstanceUID, VR.UI, uidMapper.get(
                     dest.getString(Tag.SeriesInstanceUID)));
@@ -332,10 +347,10 @@ public class MultiframeExtractor {
     }
 
     private void addFunctionGroups(Attributes dest, Attributes fgs) {
-        dest.addSelected(fgs, Tag.ReferencedImageSequence);
+        dest.addSelected(fgs, Tag.ReferencedImageSequence, Tag.SourceImageSequence);
         Attributes fg;
         for (int sqTag : fgs.tags())
-            if (sqTag != Tag.ReferencedImageSequence
+            if (sqTag != Tag.ReferencedImageSequence && sqTag != Tag.SourceImageSequence
                     && (fg = fgs.getNestedDataset(sqTag)) != null)
                 dest.addAll(fg);
     }
