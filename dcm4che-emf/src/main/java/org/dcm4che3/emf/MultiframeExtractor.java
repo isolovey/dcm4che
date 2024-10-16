@@ -359,8 +359,12 @@ public class MultiframeExtractor {
         VR.Holder vr = new VR.Holder();
         Object pixelData = src.getValue(Tag.PixelData, vr);
         if (pixelData instanceof byte[]) {
+            int frameLength = calcFrameLength(src);
+            if ( (long)frame*(long)frameLength > Integer.MAX_VALUE)
+                throw new RuntimeException(
+                        "Integer overflow detected when attempting to write pixel data for frame #" + frame + 1);
             dest.setBytes(Tag.PixelData, vr.vr, extractPixelData(
-                    (byte[]) pixelData, frame, calcFrameLength(src)));
+                    (byte[]) pixelData, frame, frameLength));
         } else if (pixelData instanceof BulkData) {
             dest.setValue(Tag.PixelData, vr.vr, extractPixelData(
                     (BulkData) pixelData, frame, calcFrameLength(src)));
@@ -371,8 +375,8 @@ public class MultiframeExtractor {
         }
     }
 
-    private BulkData extractPixelData(BulkData src, int frame,
-            int length) {
+    private BulkData extractPixelData(BulkData src, long frame,
+            long length) {
         return new BulkData(src.uriWithoutOffsetAndLength(),
                 src.offset() + frame * length, length,
                 src.bigEndian());
